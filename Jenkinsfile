@@ -2,16 +2,14 @@ pipeline {
     agent any
 
     stages {
-        stage('Compile') {
+        stage('Analisis') {
             steps {
-                dir("Servicios/Ejemplo-Microservicios"){
-                    sh "docker build -t microservicio ."
-                }
+                echo 'Hello World'
             }
         }
         stage('DBDeploy') {
             steps {
-                sh 'docker images'
+                sh "docker ps"
             }
         }
     }

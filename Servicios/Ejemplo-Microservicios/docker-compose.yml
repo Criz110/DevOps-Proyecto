@@ -1,0 +1,78 @@
+version: '3.8'
+services:
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    expose:
+      - "8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-net
+      
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    depends_on:
+      - eureka-server
+    ports:
+      - "8080:8080" # ÚNICO expuesto
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-net
+
+  mysql:
+    container_name: MySQLDocker1
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: microserviciosdb
+    networks:
+      - microservices-net
+    depends_on:
+    - eureka-server
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    depends_on:
+      - eureka-server
+      - mysql
+    expose:
+      - "8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/microserviciosdb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123
+    networks:
+      - microservices-net
+      
+  cliente-service:
+    build: ./cliente-service
+    container_name: cliente-service
+    depends_on:
+      - eureka-server
+    expose:
+      - "8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-net
+
+  saludo-service:
+    build: ./saludo-service
+    container_name: saludo-service
+    depends_on:
+      - eureka-server
+    ports:
+      - "8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    external: true

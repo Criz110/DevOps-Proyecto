@@ -9,7 +9,7 @@ pipeline {
         }
         stage('DBDeploy') {
             steps {
-                sh "docker ps"
+                 echo 'Hello World2'
             }
         }
     }

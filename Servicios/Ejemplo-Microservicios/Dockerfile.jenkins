@@ -2,7 +2,6 @@ FROM jenkins/jenkins:lts-jdk17
 
 USER root
 
-# Instalar solo Docker CLI (no daemon)
 RUN apt-get update && \
     apt-get install -y docker.io && \
     apt-get clean

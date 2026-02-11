@@ -23,15 +23,16 @@ services:
       - microservices-net
 
   mysql:
-    container_name: MySQLDocker1
+    container_name: mysql
     image: mysql:8
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: 123
       MYSQL_DATABASE: microserviciosdb
+    volumes:
+      - mysql_data:/var/lib/mysql
     networks:
       - microservices-net
-    depends_on:
-    - eureka-server
 
   auth-service:
     build: ./auth-service
@@ -66,7 +67,7 @@ services:
     container_name: saludo-service
     depends_on:
       - eureka-server
-    ports:
+    expose:
       - "8082"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -76,3 +77,6 @@ services:
 networks:
   microservices-net:
     external: true
+
+volumes:
+  mysql_data:

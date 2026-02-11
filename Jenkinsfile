@@ -1,15 +1,39 @@
 pipeline {
     agent any
 
+    environment {
+        COMPOSE_FILE = "docker-compose.yml"
+    }
+
     stages {
-        stage('Analisis') {
+
+        stage('Checkout') {
             steps {
-                echo 'Hello World'
+                checkout scm
             }
         }
-        stage('DBDeploy') {
+
+        stage('Stop Previous Containers') {
             steps {
-                 echo 'Hello World2'
+                sh 'docker compose -f $COMPOSE_FILE down || true'
+            }
+        }
+
+        stage('Build Images') {
+            steps {
+                sh 'docker compose -f $COMPOSE_FILE build'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker compose -f $COMPOSE_FILE up -d'
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                sh 'docker ps'
             }
         }
     }

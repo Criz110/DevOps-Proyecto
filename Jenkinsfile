@@ -24,7 +24,11 @@ pipeline {
                 dir('Servicios/Ejemplo-Microservicios') {
                     sh """
                         echo "Deploying ${params.IMAGE_TAG}"
-                        docker compose down
+
+                        docker compose down --remove-orphans
+
+                        docker compose build --pull --no-cache
+
                         IMAGE_TAG=${params.IMAGE_TAG} docker compose up -d
                     """
                 }

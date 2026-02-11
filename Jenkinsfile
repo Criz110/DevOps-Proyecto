@@ -27,7 +27,7 @@ pipeline {
 
                         docker compose down --remove-orphans
 
-                        docker compose build --pull --no-cache
+                        docker compose build
 
                         IMAGE_TAG=${params.IMAGE_TAG} docker compose up -d
                     """

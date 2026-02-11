@@ -1,28 +1,23 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_TAG = "${env.BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
+    }
+
     stages {
 
-        stage('Checkout') {
-            steps {
-                deleteDir()
-                checkout scm
-            }
-        }
-
-        stage('Deploy Microservices') {
+        stage('Build & Deploy') {
             steps {
                 dir('Servicios/Ejemplo-Microservicios') {
-                    sh 'docker compose down'
-                    sh 'docker compose up -d --build'
+                    sh """
+                        export IMAGE_TAG=${IMAGE_TAG}
+                        docker compose down
+                        docker compose up -d --build
+                    """
                 }
             }
         }
 
-        stage('Verify') {
-            steps {
-                sh 'docker ps'
-            }
-        }
     }
 }

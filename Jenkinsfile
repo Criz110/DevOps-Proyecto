@@ -1,23 +1,40 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_TAG = "${env.BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
+    parameters {
+        string(
+            name: 'IMAGE_TAG',
+            defaultValue: 'latest',
+            description: 'Tag de imagen a desplegar'
+        )
     }
 
     stages {
 
-        stage('Build & Deploy') {
+        stage('Checkout') {
+            steps {
+                git branch: 'master',
+                    credentialsId: 'github-creds',
+                    url: 'https://github.com/Criz110/DevOps-Proyecto.git'
+            }
+        }
+
+        stage('Deploy') {
             steps {
                 dir('Servicios/Ejemplo-Microservicios') {
                     sh """
-                        export IMAGE_TAG=${IMAGE_TAG}
+                        echo "Deploying ${params.IMAGE_TAG}"
                         docker compose down
-                        docker compose up -d --build
+                        IMAGE_TAG=${params.IMAGE_TAG} docker compose up -d
                     """
                 }
             }
         }
 
+        stage('Verify') {
+            steps {
+                sh 'docker ps'
+            }
+        }
     }
 }

@@ -3,34 +3,41 @@ pipeline {
 
     parameters {
         string(
-            name: 'IMAGE_TAG',
-            defaultValue: '',
-            description: 'Tag de imagen a desplegar (ej: 12-a3f9c21)'
+            name: 'VERSION',
+            description: 'Tag de la imagen a desplegar'
         )
     }
 
     stages {
 
+        stage('Checkout') {
+            steps {
+                git branch: 'master',
+                    credentialsId: 'github-creds',
+                    url: 'https://github.com/Criz110/DevOps-Proyecto.git'
+            }
+        }
+
         stage('Deploy Version') {
             steps {
                 dir('Servicios/Ejemplo-Microservicios') {
                     sh """
-                        echo "Deploying version: ${params.IMAGE_TAG}"
+                        echo "Deploying version: ${params.VERSION}"
 
-                        if [ -z "${params.IMAGE_TAG}" ]; then
-                          echo "ERROR: IMAGE_TAG vacío"
+                        if [ -z "${params.VERSION}" ]; then
+                          echo "ERROR: VERSION parameter is empty"
                           exit 1
                         fi
 
                         IMAGE_TAG=${params.VERSION} docker compose up -d \
-                            eureka-server \
-                            auth-service \
-                            cliente-service \
-                            saludo-service \
-                            api-gateway
+                          eureka-server \
+                          auth-service \
+                          cliente-service \
+                          saludo-service \
+                          api-gateway
                     """
                 }
             }
         }
     }
-}
+} 

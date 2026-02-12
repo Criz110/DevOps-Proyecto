@@ -31,14 +31,28 @@ pipeline {
 
                         export IMAGE_TAG=${params.VERSION}
 
+                        # Apagar solo los servicios que vas a actualizar
+                        docker compose stop \
+                        eureka-server \
+                        auth-service \
+                        cliente-service \
+                        saludo-service \
+                        api-gateway
+
+                        docker compose rm -f \
+                        eureka-server \
+                        auth-service \
+                        cliente-service \
+                        saludo-service \
+                        api-gateway
+
                         docker compose up -d \
-                          --no-deps \
-                          --force-recreate \
-                          eureka-server \
-                          auth-service \
-                          cliente-service \
-                          saludo-service \
-                          api-gateway
+                        --no-deps \
+                        eureka-server \
+                        auth-service \
+                        cliente-service \
+                        saludo-service \
+                        api-gateway
                     """
                 }
             }

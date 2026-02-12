@@ -22,19 +22,17 @@ pipeline {
             steps {
                 dir('Servicios/Ejemplo-Microservicios') {
                     sh """
-                        echo "Deploying version: ${params.VERSION}"
+                        echo Deploying version: ${params.VERSION}
 
                         if [ -z "${params.VERSION}" ]; then
-                          echo "ERROR: VERSION parameter is empty"
-                          exit 1
+                            echo "ERROR: VERSION parameter is empty"
+                            exit 1
                         fi
 
-                        IMAGE_TAG=${params.VERSION} docker compose up -d \
-                          eureka-server \
-                          auth-service \
-                          cliente-service \
-                          saludo-service \
-                          api-gateway
+                        export IMAGE_TAG=${params.VERSION}
+
+                        docker compose down
+                        docker compose up -d --remove-orphans
                     """
                 }
             }

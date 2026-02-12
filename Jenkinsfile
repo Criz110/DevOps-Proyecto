@@ -9,6 +9,10 @@ pipeline {
         )
     }
 
+    environment {
+        IMAGE_TAG = "${params.IMAGE_TAG}"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -19,17 +23,17 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy Fast') {
             steps {
                 dir('Servicios/Ejemplo-Microservicios') {
                     sh """
-                        echo "Deploying ${params.IMAGE_TAG}"
+                        echo "Deploying ${IMAGE_TAG}"
 
-                        docker compose down --remove-orphans
+                        # Construye solo si hay cambios (usa cache)
+                        docker compose build --parallel
 
-                        docker compose build
-
-                        IMAGE_TAG=${params.IMAGE_TAG} docker compose up -d
+                        # Levanta sin destruir lo que no cambió
+                        docker compose up -d
                     """
                 }
             }

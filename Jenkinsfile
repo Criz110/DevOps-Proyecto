@@ -45,8 +45,7 @@ pipeline {
                     sh """
                         echo "Deploying ${IMAGE_TAG}"
 
-                        docker compose down --remove-orphans
-                        IMAGE_TAG=${IMAGE_TAG} docker compose up -d
+                        IMAGE_TAG=${IMAGE_TAG} docker compose up -d --remove-orphans
                     """
                 }
             }

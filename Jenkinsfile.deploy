@@ -22,7 +22,12 @@ pipeline {
                           exit 1
                         fi
 
-                        IMAGE_TAG=${params.IMAGE_TAG} docker compose up -d
+                        IMAGE_TAG=${params.VERSION} docker compose up -d \
+                            eureka-server \
+                            auth-service \
+                            cliente-service \
+                            saludo-service \
+                            api-gateway
                     """
                 }
             }

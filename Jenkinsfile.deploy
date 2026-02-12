@@ -31,11 +31,17 @@ pipeline {
 
                         export IMAGE_TAG=${params.VERSION}
 
-                        docker compose down
-                        docker compose up -d --remove-orphans
+                        docker compose up -d \
+                          --no-deps \
+                          --force-recreate \
+                          eureka-server \
+                          auth-service \
+                          cliente-service \
+                          saludo-service \
+                          api-gateway
                     """
                 }
             }
         }
     }
-} 
+}

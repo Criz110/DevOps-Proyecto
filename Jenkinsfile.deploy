@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(
+            name: 'IMAGE_TAG',
+            description: 'Versión a desplegar'
+        )
+    }
+
+    stages {
+
+        stage('Deploy Version') {
+            steps {
+                dir('Servicios/Ejemplo-Microservicios') {
+                    sh """
+                        echo "Deploying version: ${params.IMAGE_TAG}"
+                        IMAGE_TAG=${params.IMAGE_TAG} docker compose up -d
+                    """
+                }
+            }
+        }
+    }
+}

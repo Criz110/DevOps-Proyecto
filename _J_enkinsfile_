@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'master',
+                    credentialsId: 'github-creds',
+                    url: 'https://github.com/Criz110/DevOps-Proyecto.git'
+            }
+        }
+
+        stage('Generate Tag') {
+            steps {
+                script {
+                    def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                    env.IMAGE_TAG = "${env.BUILD_NUMBER}-${commit}"
+                }
+            }
+        }
+
+        stage('Build Images') {
+            steps {
+                dir('Servicios/Ejemplo-Microservicios') {
+                    sh """
+                        docker build -t ejemplo/eureka-server:${IMAGE_TAG} ./eureka-server
+                        docker build -t ejemplo/auth-service:${IMAGE_TAG} ./auth-service
+                        docker build -t ejemplo/cliente-service:${IMAGE_TAG} ./cliente-service
+                        docker build -t ejemplo/saludo-service:${IMAGE_TAG} ./saludo-service
+                        docker build -t ejemplo/api-gateway:${IMAGE_TAG} ./api-gateway
+                    """
+                }
+            }
+        }
+
+        stage('Show Version') {
+            steps {
+                echo "Generated version: ${IMAGE_TAG}"
+            }
+        }
+    }
+}

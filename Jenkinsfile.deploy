@@ -4,7 +4,8 @@ pipeline {
     parameters {
         string(
             name: 'IMAGE_TAG',
-            description: 'Versión a desplegar'
+            defaultValue: '',
+            description: 'Tag de imagen a desplegar (ej: 12-a3f9c21)'
         )
     }
 
@@ -15,6 +16,12 @@ pipeline {
                 dir('Servicios/Ejemplo-Microservicios') {
                     sh """
                         echo "Deploying version: ${params.IMAGE_TAG}"
+
+                        if [ -z "${params.IMAGE_TAG}" ]; then
+                          echo "ERROR: IMAGE_TAG vacío"
+                          exit 1
+                        fi
+
                         IMAGE_TAG=${params.IMAGE_TAG} docker compose up -d
                     """
                 }

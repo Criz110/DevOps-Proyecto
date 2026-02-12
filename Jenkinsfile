@@ -11,6 +11,7 @@ pipeline {
 
     environment {
         IMAGE_TAG = "${params.IMAGE_TAG}"
+        COMPOSE_PROJECT_NAME = "microservices"
     }
 
     stages {
@@ -23,29 +24,16 @@ pipeline {
             }
         }
 
-        stage('Build Images') {
+        stage('Deploy Selected Services') {
             steps {
                 dir('Servicios/Ejemplo-Microservicios') {
                     sh """
-                        echo "Building images with tag ${IMAGE_TAG}"
+                        echo "Deploying version: ${IMAGE_TAG}"
 
-                        docker build -t ejemplo/eureka-server:${IMAGE_TAG} ./eureka-server
-                        docker build -t ejemplo/auth-service:${IMAGE_TAG} ./auth-service
-                        docker build -t ejemplo/cliente-service:${IMAGE_TAG} ./cliente-service
-                        docker build -t ejemplo/saludo-service:${IMAGE_TAG} ./saludo-service
-                        docker build -t ejemplo/api-gateway:${IMAGE_TAG} ./api-gateway
-                    """
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                dir('Servicios/Ejemplo-Microservicios') {
-                    sh """
-                        echo "Deploying ${IMAGE_TAG}"
-
-                        IMAGE_TAG=${IMAGE_TAG} docker compose up -d --remove-orphans
+                        docker compose -f docker-compose.yml \\
+                        -p ${COMPOSE_PROJECT_NAME} \\
+                        up -d \\
+                        eureka-server auth-service cliente-service saludo-service api-gateway
                     """
                 }
             }

@@ -23,17 +23,30 @@ pipeline {
             }
         }
 
-        stage('Deploy Fast') {
+        stage('Build Images') {
+            steps {
+                dir('Servicios/Ejemplo-Microservicios') {
+                    sh """
+                        echo "Building images with tag ${IMAGE_TAG}"
+
+                        docker build -t ejemplo/eureka-server:${IMAGE_TAG} ./eureka-server
+                        docker build -t ejemplo/auth-service:${IMAGE_TAG} ./auth-service
+                        docker build -t ejemplo/cliente-service:${IMAGE_TAG} ./cliente-service
+                        docker build -t ejemplo/saludo-service:${IMAGE_TAG} ./saludo-service
+                        docker build -t ejemplo/api-gateway:${IMAGE_TAG} ./api-gateway
+                    """
+                }
+            }
+        }
+
+        stage('Deploy') {
             steps {
                 dir('Servicios/Ejemplo-Microservicios') {
                     sh """
                         echo "Deploying ${IMAGE_TAG}"
 
-                        # Construye solo si hay cambios (usa cache)
-                        docker compose build --parallel
-
-                        # Levanta sin destruir lo que no cambió
-                        docker compose up -d
+                        docker compose down --remove-orphans
+                        IMAGE_TAG=${IMAGE_TAG} docker compose up -d
                     """
                 }
             }

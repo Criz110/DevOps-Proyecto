@@ -12,13 +12,14 @@ services:
       - "8085:8080"
       - "50000:50000"
     volumes:
-      - jenkins_home:/var/jenkins_home
+      - ejemplo-microservicios_jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - microservices-net
 
 volumes:
-  jenkins_home:
+  ejemplo-microservicios_jenkins_home:
+    external: true
 
 networks:
   microservices-net:

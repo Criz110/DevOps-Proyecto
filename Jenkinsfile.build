@@ -1,31 +1,33 @@
 pipeline {
     agent any
+
     tools{
         maven 'M3_8_6'
     }
 
     stages {
 
-        stage('Validate'){
-            steps {
-                dir("Servicios/Ejemplo-Microservicios"){
-                    withSonarQubeEnv('SonarServer'){
-                        sh "mvn clean install sonar:sonar \
-                            -Dsonar.projectKey=22_MyCompany_Microservice \
-                            -Dsonar.projectName=22_MyCompany_Microservice \
-                            -Dsonar.sources=src/main \
-                            -Dsonar.coverage.exclusions=**/*TO.java,**/*DO.java,**/curso/web/**/*,**/curso/persistence/**/*,**/curso/commons/**/*,**/curso/model/**/* \
-                            "
-                    }
-                }
-            }
-        }
-
         stage('Checkout') {
             steps {
                 git branch: 'master',
                     credentialsId: 'github-creds',
                     url: 'https://github.com/Criz110/DevOps-Proyecto.git'
+            }
+        }
+
+        stage('Validate') {
+            steps {
+                dir("Servicios/Ejemplo-Microservicios") {
+                    withSonarQubeEnv('SonarServer') {
+                        sh """
+                            mvn clean install sonar:sonar \
+                            -Dspring.profiles.active=test \
+                            -Dsonar.projectKey=22_MyCompany_Microservice \
+                            -Dsonar.projectName=22_MyCompany_Microservice \
+                            -Dsonar.sources=src/main
+                        """
+                    }
+                }
             }
         }
 

@@ -19,13 +19,7 @@ pipeline {
             steps {
                 dir("Servicios/Ejemplo-Microservicios") {
                     withSonarQubeEnv('SonarServer') {
-                        sh """
-                            mvn clean install sonar:sonar \
-                            -Dspring.profiles.active=test \
-                            -Dsonar.projectKey=22_MyCompany_Microservice \
-                            -Dsonar.projectName=22_MyCompany_Microservice \
-                            -Dsonar.sources=src/main
-                        """
+                       sh "mvn clean install sonar:sonar ..."
                     }
                 }
             }

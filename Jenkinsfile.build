@@ -19,7 +19,7 @@ pipeline {
             steps {
                 dir("Servicios/Ejemplo-Microservicios") {
                     withSonarQubeEnv('SonarServer') {
-                       sh "mvn clean install sonar:sonar ..."
+                       sh 'mvn clean install sonar:sonar'
                     }
                 }
             }

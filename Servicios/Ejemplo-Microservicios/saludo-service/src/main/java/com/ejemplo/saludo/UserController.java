@@ -10,7 +10,7 @@ public class UserController {
     
     @GetMapping("/getUser")
     public String getUsers() {
-        return "Lista de usuarios v8";
+        return "Lista de usuarios v9";
     }
 
     @GetMapping("/getAll")

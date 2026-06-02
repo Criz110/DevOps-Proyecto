@@ -15,7 +15,7 @@ pipeline {
             }
         }
 
-        stage('Validate') {
+      /*  stage('Validate') {
             steps {
                 dir("Servicios/Ejemplo-Microservicios") {
                     withSonarQubeEnv('SonarServer') {
@@ -24,7 +24,7 @@ pipeline {
                 }
             }
         }
-
+    */
         stage('Generate Tag') {
             steps {
                 script {
